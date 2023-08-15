@@ -1,5 +1,5 @@
 import sys
-sys.path.append("G:\Meu Drive\Mestrado\Pesquisa\paper - AE como medida de similaridade\EXPERIMENTOS_PESQUISA_FINAL")
+sys.path.append("/home/gui/Documents/2_experimentos_pesquisa-20230815T143457Z-001/experimentos_pesquisa")
 
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
@@ -19,7 +19,7 @@ print('warnings ignorados')
 # Ionosphere dataset #
 ################################################################################
 
-df = pd.read_csv('Datasets\Ionosphere\ionosphere.data')
+df = pd.read_csv('Datasets/Ionosphere/ionosphere.data')
 X = torch.tensor(df.iloc[:, :-1].values, dtype = torch.float64)
 Y = [1 if x == 'g' else 0 for x in df.iloc[:, -1].values]
 
@@ -114,7 +114,7 @@ RN_len = []
 tempo = []
 
 for rate in positive_rate:
-    for i in range(1):
+    for i in range(10):
         print(f'iteração {i}')
         positives = random.sample(all_positives, int(rate * len(all_positives)))
         unlabeled = list(set(range(len(G.nodes()))) - set(positives))
@@ -138,7 +138,7 @@ for rate in positive_rate:
         'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
         'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1.4),
-        'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.1)
+        'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
         }
         for algorithm in algorithms_ionosphere:
             start_time = time.time()

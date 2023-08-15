@@ -1,5 +1,5 @@
 import sys
-sys.path.append("G:\Meu Drive\Mestrado\Pesquisa\paper - AE como medida de similaridade\EXPERIMENTOS_PESQUISA_FINAL")
+sys.path.append("/home/gui/Documents/2_experimentos_pesquisa-20230815T143457Z-001/experimentos_pesquisa")
 
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
@@ -25,7 +25,7 @@ data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
 G = to_networkx(data, to_undirected=True)
-adj = nx.adj_matrix(G).toarray()
+adj = nx.adjacency_matrix(G).toarray()
 
 # Criando uma variável para armazenar as features
 X = data.x.double()
@@ -118,7 +118,7 @@ class Autoencoder(nn.Module):
     
 positive_rate = [0.01, 0.02, 0.03, 0.04, 0.05, 0.1, 0.15, 0.20, 0.25]
 auto_inference_algorithms = ['CCRNE', 'PU_LP', 'RCSVM_RN']
-num_neg = 2000
+num_neg = 300
 
 algoritmo_list = []
 iteracao_list = []
@@ -147,8 +147,8 @@ for rate in positive_rate:
 
 
         algorithms_pubmed = {
-        'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
-        'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
+        # 'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
+        # 'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
         'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
