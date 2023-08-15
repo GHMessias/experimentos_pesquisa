@@ -157,8 +157,8 @@ for rate in positive_rate:
 
 
         algorithms_mnist = {
-        'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
-        'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
+        # 'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
+        # 'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
         'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
