@@ -1,5 +1,5 @@
 import sys
-sys.path.append("G:\Meu Drive\Mestrado\Pesquisa\paper - AE como medida de similaridade\EXPERIMENTOS_PESQUISA_FINAL")
+sys.path.append("/home/gui/Documents/2_experimentos_pesquisa-20230815T143457Z-001/experimentos_pesquisa")
 
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *

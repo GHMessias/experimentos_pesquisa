@@ -1,5 +1,5 @@
 import sys
-sys.path.append("G:\Meu Drive\Mestrado\Pesquisa\paper - AE como medida de similaridade\EXPERIMENTOS_PESQUISA_FINAL")
+sys.path.append("/home/gui/Documents/2_experimentos_pesquisa-20230815T143457Z-001/experimentos_pesquisa")
 
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
@@ -25,7 +25,7 @@ data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
 G = to_networkx(data, to_undirected=True)
-adj = nx.adj_matrix(G).toarray()
+adj = nx.adjacency_matrix(G).toarray()
 
 # Criando uma variável para armazenar as features
 X = data.x.double()
@@ -152,7 +152,7 @@ for rate in positive_rate:
         'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 100, data = X, positives = positives, unlabeled = unlabeled),
         'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
-        'PU_LP' : PU_LP(graph = G, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 10, l = 5, k = 5),
+        'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1),
         'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.1)
         }
         for algorithm in algorithms_citeseer:
