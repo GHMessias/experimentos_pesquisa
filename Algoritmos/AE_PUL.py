@@ -25,7 +25,8 @@ class autoencoder_PUL_model:
             self.optimizer.step()
 
     def negative_inference(self, num_neg):
-        loss_rank = [F.mse_loss(self.data[i], self.model(self.data)[i]).item() for i in self.unlabeled]
+        output_ = self.model(self.data)
+        loss_rank = [F.mse_loss(self.data[i], output_[i]).item() for i in self.unlabeled]
 
         RN = [x for _, x in sorted(zip(loss_rank, self.unlabeled), reverse = True)][:num_neg]
         # for loss, element in sorted(zip(loss_rank, self.unlabeled), reverse = False):
