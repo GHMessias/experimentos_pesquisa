@@ -22,11 +22,11 @@ class RCSVM_RN:
         self.c_negative = self.alpha * 1/len(self.unlabeled) * torch.mean(self.data[unlabeled_mask]) - self.beta * 1/len(self.positives) * torch.mean(self.data[positive_mask])
 
 
-    def negative_inference(self, similarity = euclidean_distance):
+    def negative_inference(self, num_neg, similarity = euclidean_distance):
         RN = list()
         for element in self.unlabeled:
             if similarity(self.c_positive, element) <= similarity(self.c_negative, element):
                 RN.append(element)
         
-        return torch.tensor(RN)
+        return torch.tensor(RN[:num_neg])
     

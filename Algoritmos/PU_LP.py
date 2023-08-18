@@ -47,6 +47,6 @@ class PU_LP:
         _, self.RN = zip(*sorted(zip(S, [element for element in self.unlabeled if element not in self.RP]), reverse=True))
         self.RN = list(self.RN)
 
-    def negative_inference(self):
-        return self.RN[-len(self.positives + self.RP):]
+    def negative_inference(self, num_neg):
+        return self.RN[-num_neg:]
 

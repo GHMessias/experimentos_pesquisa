@@ -59,7 +59,7 @@ class CCRNE:
                 self.clusters[len(self.clusters) - 1]['centroid'] = self.data[x_i]
 
     
-    def negative_inference(self):
+    def negative_inference(self, num_neg):
         RN = self.unlabeled
 
         for i in range(len(self.clusters)):
@@ -67,4 +67,4 @@ class CCRNE:
                     if euclidean_distance(self.data[x_i], self.clusters[i]['centroid']) < self.r_p:
                         RN.remove(x_i)
         
-        return RN
+        return RN[:num_neg]

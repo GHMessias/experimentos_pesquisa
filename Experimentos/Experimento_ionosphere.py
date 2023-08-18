@@ -75,6 +75,8 @@ class Regularized_GAE(torch.nn.Module):
         x = self.decoder(x)
         return x
     
+    
+
 
 # Modelo AutoEncoder Padrão
 
@@ -98,6 +100,7 @@ class Autoencoder(nn.Module):
         encoded = self.encoder(x)
         decoded = self.decoder(encoded)
         return decoded
+
 
 # Instanciando os algoritmos (ainda é necessário fazer o teste paramétrico dos outros modelos)
     
@@ -145,10 +148,7 @@ for rate in positive_rate:
             print(f'algoritmo {algorithm}')
             print(f'tamanho do dataset positivo {len(positives)}')
             algorithms_ionosphere[algorithm].train()
-            if algorithm in auto_inference_algorithms:
-                RN = algorithms_ionosphere[algorithm].negative_inference()
-            else:
-                RN = algorithms_ionosphere[algorithm].negative_inference(num_neg)      
+            RN = algorithms_ionosphere[algorithm].negative_inference(num_neg)      
             end_time = time.time()
             tempo.append(end_time - start_time)
             acc = compute_accuracy(Y, RN)
