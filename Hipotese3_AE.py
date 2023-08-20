@@ -107,7 +107,7 @@ def strong_connect_positives(edge_index, P):
 # edge_weights = strong_connect_positives(connect_positives(edge_index, P), P)
 # print("Edge Weights:", edge_weights)
 
-dataset = Planetoid(root = 'Datasets', name = "Cora", transform=NormalizeFeatures())
+dataset = Planetoid(root = 'Datasets', name = "CiteSeer", transform=NormalizeFeatures())
 data = dataset[0]
 
 G = to_networkx(data, to_undirected=True)
@@ -124,9 +124,9 @@ nodes_to_edges = [edge[1] for edge in edges]
 edge_index = torch.tensor([nodes_from_edges, nodes_to_edges], dtype=torch.long)
 
 # CORA
-pul_label = [0,1,2,4]
+# pul_label = [0,1,2,4]
 # CiteSeer
-# pul_label = [2,3,4]
+pul_label = [2,3,4]
 
 Y = torch.tensor([1 if x in pul_label else 0 for x in Y])
 
@@ -142,13 +142,13 @@ class Regularized_GAE(torch.nn.Module):
             nn.Linear(hid_channel1, hid_channel2),
             nn.ReLU()
         )
-        self.conv1 = GCNConv(hid_channel2, hid_channel2)
-        self.conv2 = GCNConv(hid_channel2, hid_channel2)
+        self.conv1 = GCNConv(hid_channel2, hid_channel2 // 2)
+        self.conv2 = GCNConv(hid_channel2 // 2, hid_channel2)
         self.decoder = nn.Sequential(
             nn.Linear(hid_channel2, hid_channel1),
             nn.ReLU(),
             nn.Linear(hid_channel1, in_channel),
-            nn.Sigmoid()
+            nn.ReLU()
         )    
 
     def forward(self, x, edge_index, edge_weight):
@@ -194,7 +194,7 @@ for i in range(10):
     edge_index = connect_positives(edge_index, positives)
     print('calculando strong connecting')
     edge_weights = strong_connect_positives(edge_index, positives)
-    # print('finalizado')
+    print('finalizado')
     # edge_weights = edge_weight_positives(G, edge_index, positives)
     # edge_weights = torch.sqrt(edge_weights)
     model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=256, hid_channel2=128)
