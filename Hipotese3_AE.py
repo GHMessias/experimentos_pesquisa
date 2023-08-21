@@ -1,8 +1,13 @@
+import warnings
+
+warnings.filterwarnings('ignore')
+
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
 from Algoritmos.AE_PUL import autoencoder_PUL_model
 from Algoritmos.GAE_PUL import graphautoencoder_PUL_model
 from torch_geometric.nn import GCNConv
+
 
 # def edge_weight_positives(G, edge_index, P):
 #     edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
@@ -62,7 +67,8 @@ def connect_graph(data, G):
                     _G.add_edge(i, j)
         _G = _G.to_undirected()
 
-    return _G
+        return _G
+    return G
 
 def connect_positives(edge_index, P):
     src_list = edge_index[0].tolist()
@@ -88,7 +94,7 @@ def strong_connect_positives(edge_index, P):
     positive_mask = src_mask & tgt_mask
     
     # Update edge weights for positive edges
-    edge_weight[positive_mask] += np.sqrt(5) - 1
+    edge_weight[positive_mask] += 1
     
     return edge_weight
 
@@ -107,7 +113,7 @@ def strong_connect_positives(edge_index, P):
 # edge_weights = strong_connect_positives(connect_positives(edge_index, P), P)
 # print("Edge Weights:", edge_weights)
 
-dataset = Planetoid(root = 'Datasets', name = "CiteSeer", transform=NormalizeFeatures())
+dataset = Planetoid(root = 'Datasets', name = "Cora", transform=NormalizeFeatures())
 data = dataset[0]
 
 G = to_networkx(data, to_undirected=True)
@@ -124,9 +130,11 @@ nodes_to_edges = [edge[1] for edge in edges]
 edge_index = torch.tensor([nodes_from_edges, nodes_to_edges], dtype=torch.long)
 
 # CORA
-# pul_label = [0,1,2,4]
+pul_label = [0,1,2,4]
 # CiteSeer
-pul_label = [2,3,4]
+#pul_label = [2,3,4]
+
+# pul_label = [1]
 
 Y = torch.tensor([1 if x in pul_label else 0 for x in Y])
 
@@ -142,8 +150,8 @@ class Regularized_GAE(torch.nn.Module):
             nn.Linear(hid_channel1, hid_channel2),
             nn.ReLU()
         )
-        self.conv1 = GCNConv(hid_channel2, hid_channel2 // 2)
-        self.conv2 = GCNConv(hid_channel2 // 2, hid_channel2)
+        self.conv1 = GCNConv(hid_channel2, hid_channel2)
+        # self.conv2 = GCNConv(hid_channel2, hid_channel2)
         self.decoder = nn.Sequential(
             nn.Linear(hid_channel2, hid_channel1),
             nn.ReLU(),
@@ -155,8 +163,8 @@ class Regularized_GAE(torch.nn.Module):
         x = self.encoder(x)
         x = self.conv1(x, edge_index, edge_weight)
         x = F.relu(x)
-        x = self.conv2(x, edge_index, edge_weight)
-        x = F.relu(x)
+        # x = self.conv2(x, edge_index, edge_weight)
+        # x = F.relu(x)
         x = self.decoder(x)
         return x
       
@@ -192,13 +200,13 @@ for i in range(10):
 
     print('conectando positivos')
     edge_index = connect_positives(edge_index, positives)
-    print('calculando strong connecting')
+    # print('calculando strong connecting')
     edge_weights = strong_connect_positives(edge_index, positives)
-    print('finalizado')
+    # print('finalizado')
     # edge_weights = edge_weight_positives(G, edge_index, positives)
     # edge_weights = torch.sqrt(edge_weights)
-    model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=256, hid_channel2=128)
-    model2 = Autoencoder(input_size = X.shape[1], hidden_size1 = 256, hidden_size2 = 128)
+    model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=128, hid_channel2=64)
+    model2 = Autoencoder(input_size = X.shape[1], hidden_size1 = 128, hidden_size2 = 64)
     optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.01)
     optimizer2 = torch.optim.Adam(model2.parameters(), lr = 0.01)
 
@@ -215,14 +223,14 @@ for i in range(10):
         GAE_classifier.train()
         RN_GAE = GAE_classifier.negative_inference(num_neg = 200)
         # print(f'GAE: quantidade de epocas de treinamento {epoch} \t acurácia {compute_accuracy(Y, RN_GAE)}')
-        model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=256, hid_channel2=128)
-        optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.001)
+        model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=128, hid_channel2=64)
+        optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.01)
 
         AE_classifier = autoencoder_PUL_model(model = model2, optimizer = optimizer2, epochs = epoch, data = X, positives = positives, unlabeled = unlabeled)
         AE_classifier.train()
         RN_AE = AE_classifier.negative_inference(num_neg = 200)
         # print(f'AE : quantidade de epocas de treinamento {epoch} \t acurácia {compute_accuracy(Y, RN_AE)}')
-        model2 = Autoencoder(input_size = X.shape[1], hidden_size1 = 256, hidden_size2 = 128)
+        model2 = Autoencoder(input_size = X.shape[1], hidden_size1 = 128, hidden_size2 = 64)
         optimizer2 = torch.optim.Adam(model2.parameters(), lr = 0.01)
 
         print(f'Quantidade de epocas de treinamento: {epoch}, \t acurária GAE: {compute_accuracy(Y, RN_GAE)} \t acurácia AE: {compute_accuracy(Y, RN_AE)}')

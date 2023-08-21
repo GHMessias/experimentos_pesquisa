@@ -34,7 +34,7 @@ class graphautoencoder_PUL_model:
         output_ = self.model(self.data, self.edge_index, self.edge_weight)
         loss_rank = [F.mse_loss(self.data[i], output_[i]).item() for i in self.unlabeled]
 
-        RN = [x for _, x in sorted(zip(loss_rank, self.unlabeled), reverse = False)][:num_neg]
+        RN = [x for _, x in sorted(zip(loss_rank, self.unlabeled), reverse = True)][:num_neg]
         # for loss, element in sorted(zip(loss_rank, self.unlabeled), reverse = False):
         #     print(loss, element, y[element])
         # print(RN)

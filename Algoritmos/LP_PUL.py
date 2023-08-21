@@ -32,32 +32,32 @@ class LP_PUL:
 
 
     def train(self):
-        self.distance_vector = np.zeros(len(self.unlabeled))
-        # Verificando se o grafo é conexo, se não for, cria uma MST e soma as arestas novas no grafo
+        self.a = np.zeros(len(self.unlabeled) + len(self.positives))
+        # Verificando se o grafo é conexo, se não for, cria uma MST e soma as arestas novas no grafo        
         if not nx.is_connected(self.graph):
-            adj = nx.adjacency_matrix(self.graph)
+            # print('Connecting the graph')
+            adj = nx.to_scipy_sparse_matrix(self.graph)  # Convert to sparse matrix
             adj_aux = mst_graph(self.data).toarray()
-            aux_graph = nx.DiGraph()
-            aux_graph.add_nodes_from(range(len(adj_aux)))
-            for i in range(len(adj_aux)):
-                for j in range(len(adj_aux)):
-                    if adj[i,j] == 0 and adj_aux[i,j] == 1:
-                        self.graph.add_edge(i,j)
-        
-        d = list()
+            
+            rows, cols = np.where((adj.toarray() == 0) & (adj_aux == 1))
+            
+            for i, j in zip(rows, cols):
+                self.graph.add_edge(i, j)
+
+        d = np.zeros(len(self.unlabeled) + len(self.positives))
 
         for p in self.positives:
             for u in self.unlabeled:
                 #print(f'computing shortest path length {u}/{p}')
                 d_u = nx.shortest_path_length(self.graph,p,u)
-                d.append(d_u)
-            self.distance_vector += d
-            d = list()
+                d[u] = d_u
+            self.a += d
+            d = np.zeros(len(self.unlabeled) + len(self.positives))
 
-        for i in range(len(self.distance_vector)):
-            self.distance_vector[i] = self.distance_vector[i] / len(self.positives)
+        
+        self.a = self.a / len(self.positives)
         
 
     def negative_inference(self, num_neg):
-        RN = [x for _, x in sorted(zip(self.distance_vector, self.unlabeled), reverse=True)][:num_neg]
+        RN = [x for _, x in sorted(zip(self.a, range(len(self.data))), reverse=True)][:num_neg]
         return RN
