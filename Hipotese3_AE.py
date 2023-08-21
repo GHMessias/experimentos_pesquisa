@@ -9,20 +9,6 @@ from Algoritmos.GAE_PUL import graphautoencoder_PUL_model
 from torch_geometric.nn import GCNConv
 
 
-# def edge_weight_positives(G, edge_index, P):
-#     edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
-#     for indexi, i in enumerate(P):
-#         for indexj, j in enumerate(P):
-#             print(f'{indexi} / {len(P)} -- {indexj} / {len(P)}')
-#             if i != j:
-#                 short_path = nx.shortest_path(G, i, j)
-#                 for index in range(len(short_path) - 1):
-#                     for e_idx, (src, tgt) in enumerate(edge_index.T):
-#                         #if (src == short_path[index] and tgt == short_path[index + 1]) or (src == short_path[index + 1] and tgt == short_path[index]):
-#                         if (src == short_path[index] and tgt == short_path[index + 1]):
-#                             edge_weight[e_idx] += 1
-#     return edge_weight
-
 def edge_weight_positives(G, edge_index, P):
     edge_weight = torch.ones(edge_index.shape[1], dtype=torch.float32)
     paths = dict(nx.all_pairs_shortest_path(G))  # Convert generator to dictionary
@@ -94,7 +80,7 @@ def strong_connect_positives(edge_index, P):
     positive_mask = src_mask & tgt_mask
     
     # Update edge weights for positive edges
-    edge_weight[positive_mask] += np.sqrt(5) - 1
+    edge_weight[positive_mask] += np.sqrt(5)
     
     return edge_weight
 
@@ -190,7 +176,7 @@ class Autoencoder(nn.Module):
         return decoded
     
 
-epochs = list(range(1,40))
+epochs = list(range(1,11))
 
 print(nx.is_directed(G))
 positive_rate = 0.05
@@ -198,16 +184,16 @@ for i in range(10):
     positives = random.sample(all_positives, int(positive_rate * len(all_positives)))
     unlabeled = list(set(range(len(G.nodes()))) - set(positives))   
 
-    # print('conectando positivos')
-    # edge_index = connect_positives(edge_index, positives)
-    # # print('calculando strong connecting')
-    # edge_weights = strong_connect_positives(edge_index, positives)
+    print('conectando positivos')
+    edge_index = connect_positives(edge_index, positives)
+    # print('calculando strong connecting')
+    edge_weights = strong_connect_positives(edge_index, positives)
     # print('finalizado')
     # edge_weights = edge_weight_positives(G, edge_index, positives)
     # edge_weights = torch.sqrt(edge_weights)
     model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=256, hid_channel2=128)
     model2 = Autoencoder(input_size = X.shape[1], hidden_size1 = 256, hidden_size2 = 128)
-    optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.01)
+    optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.001)
     optimizer2 = torch.optim.Adam(model2.parameters(), lr = 0.01)
 
     print(len(positives))
@@ -219,12 +205,12 @@ for i in range(10):
                                                     positives = positives,
                                                     unlabeled = unlabeled,
                                                     edge_index=edge_index,
-                                                    edge_weight=None)
+                                                    edge_weight=edge_weights)
         GAE_classifier.train()
         RN_GAE = GAE_classifier.negative_inference(num_neg = 200)
         # print(f'GAE: quantidade de epocas de treinamento {epoch} \t acurácia {compute_accuracy(Y, RN_GAE)}')
         model1 = Regularized_GAE(in_channel = X.shape[1], hid_channel1=256, hid_channel2=128)
-        optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.001)
+        # optimizer1 = torch.optim.Adam(model1.parameters(), lr = 0.001)
 
         AE_classifier = autoencoder_PUL_model(model = model2, optimizer = optimizer2, epochs = epoch, data = X, positives = positives, unlabeled = unlabeled)
         AE_classifier.train()
