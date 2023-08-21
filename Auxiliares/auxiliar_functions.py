@@ -150,3 +150,55 @@ def compute_f1_score(y, infered_elements):
 
 def euclidean_distance(tensor1, tensor2):
     return torch.sqrt(torch.sum(tensor1 - tensor2) ** 2)
+
+def connect_graph(data, G):
+    if not nx.is_connected(G):
+        n = len(G.nodes())
+        A = mst_graph(data).toarray()
+        adj = nx.adjacency_matrix(G).toarray()
+        # for every u,v in A, if A[u,v] == 1 and adj[u,v] == 0 then, adj[u,v] = 1
+        for i in range(n):
+            for j in range(n):
+                if A[i][j] == 1 and adj[i][j] == 0:
+                    adj[i][j] = 1
+        adj = np.matrix(adj)
+        _G = nx.DiGraph()
+        num_nodes = len(adj)
+        for node in range(num_nodes):
+            G.add_node(node)  # Add nodes to the graph
+        for i in range(num_nodes):
+            for j in range(num_nodes):
+                if adj[i, j] == 1:
+                    _G.add_edge(i, j)
+        _G = _G.to_undirected()
+
+        return _G
+    return G
+
+def connect_positives(edge_index, P):
+    src_list = edge_index[0].tolist()
+    tgt_list = edge_index[1].tolist()
+    for i in P:
+        for j in P:
+            if i != j:
+                src_list.append(i)
+                tgt_list.append(j)
+                src_list.append(j)
+                tgt_list.append(i)
+    edge_index = torch.tensor([src_list, tgt_list], dtype=torch.long)
+    return edge_index
+
+def strong_connect_positives(edge_index, P):
+    edge_weight = torch.ones((edge_index.shape[1],), dtype=torch.float32)
+    
+    # Create masks for source and target nodes in P
+    src_mask = torch.tensor([src in P for src in edge_index[0]])
+    tgt_mask = torch.tensor([tgt in P for tgt in edge_index[1]])
+    
+    # Combine masks to find edges with both source and target in P
+    positive_mask = src_mask & tgt_mask
+    
+    # Update edge weights for positive edges
+    edge_weight[positive_mask] += 1
+    
+    return edge_weight

@@ -1,5 +1,5 @@
 import sys
-sys.path.append("/home/gui/Documents/2_experimentos_pesquisa-20230815T143457Z-001/experimentos_pesquisa")
+sys.path.append("")
 
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
