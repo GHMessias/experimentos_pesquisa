@@ -220,6 +220,6 @@ for i in range(10):
         optimizer2 = torch.optim.Adam(model2.parameters(), lr = 0.01)
 
         print(f'Quantidade de epocas de treinamento: {epoch}, \t acurária GAE: {compute_accuracy(Y, RN_GAE)} \t acurácia AE: {compute_accuracy(Y, RN_AE)}')
-
+        # print(model1(X, edge_index, edge_weights))
 
 
