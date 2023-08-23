@@ -11,64 +11,64 @@ from sklearn.neighbors import kneighbors_graph
 from sklearn.metrics import accuracy_score, f1_score
 
 
-def matrizPeso(G, P):
-    '''
-    G: Graph
-    P: List of positive nodes
+# def matrizPeso(G, P):
+#     '''
+#     G: Graph
+#     P: List of positive nodes
 
-    return the adjacency matrix of G with weighted edges in the shortest path between every two nodes of P
-    '''
-    A = nx.adjacency_matrix(G, nodelist=range(len(G.nodes()))).todense()
-    for index, value in enumerate(P):
-        for j in P[index + 1:]:  # Avoids re-computing paths and self-loops
-            try:
-                node_list = nx.dijkstra_path(G, value, j)
-                for u, v in zip(node_list[:-1], node_list[1:]):
-                    A[u, v] += 1
-            except nx.NetworkXNoPath:
-                # Handle the case when there is no path between value and j
-                pass
+#     return the adjacency matrix of G with weighted edges in the shortest path between every two nodes of P
+#     '''
+#     A = nx.adjacency_matrix(G, nodelist=range(len(G.nodes()))).todense()
+#     for index, value in enumerate(P):
+#         for j in P[index + 1:]:  # Avoids re-computing paths and self-loops
+#             try:
+#                 node_list = nx.dijkstra_path(G, value, j)
+#                 for u, v in zip(node_list[:-1], node_list[1:]):
+#                     A[u, v] += 1
+#             except nx.NetworkXNoPath:
+#                 # Handle the case when there is no path between value and j
+#                 pass
 
-    return torch.tensor(A, dtype=torch.float64)
+#     return torch.tensor(A, dtype=torch.float64)
 
-def degree_matrix(G):
-    D = torch.zeros((len(G.nodes()),len(G.nodes())), dtype = torch.float64)
+# def degree_matrix(G):
+#     D = torch.zeros((len(G.nodes()),len(G.nodes())), dtype = torch.float64)
 
-    for i in G.nodes():
-        D[i][i] = G.degree[i]
+#     for i in G.nodes():
+#         D[i][i] = G.degree[i]
 
-    return D
+#     return D
 
-def inverse_sqroot_matrix(D):
-    D_clone = D.clone()
-    D_clone[D_clone != 0] = D_clone[D_clone != 0].pow(-0.5)
-    return D_clone
+# def inverse_sqroot_matrix(D):
+#     D_clone = D.clone()
+#     D_clone[D_clone != 0] = D_clone[D_clone != 0].pow(-0.5)
+#     return D_clone
     
 
-def message_passing_PUL(D_tilde, A_tilde, X, C, function):
-    result = function(torch.matmul(torch.matmul(torch.matmul(D_tilde, (A_tilde + C)), D_tilde), X))
-    return result
+# def message_passing_PUL(D_tilde, A_tilde, X, C, function):
+#     result = function(torch.matmul(torch.matmul(torch.matmul(D_tilde, (A_tilde + C)), D_tilde), X))
+#     return result
 
-def relu(A):
-    return torch.maximum(A, torch.tensor(0.0))
+# def relu(A):
+#     return torch.maximum(A, torch.tensor(0.0))
 
-def feature_matrix(G, P, y):
-    # Criando a matriz de características
-    n_features = 10
-    n_elements = len(G.nodes())
+# def feature_matrix(G, P, y):
+#     # Criando a matriz de características
+#     n_features = 10
+#     n_elements = len(G.nodes())
 
-    X = torch.zeros((n_elements, n_features))
+#     X = torch.zeros((n_elements, n_features))
 
-    for i in range(n_elements):
-        if y[i] == 1:
-            X[i] = torch.rand(1)  # Valores entre 0 e 1 (distribuição uniforme)
-        else:
-            X[i] = -torch.rand(1)  # Valores entre -1 e 0 (distribuição uniforme)
+#     for i in range(n_elements):
+#         if y[i] == 1:
+#             X[i] = torch.rand(1)  # Valores entre 0 e 1 (distribuição uniforme)
+#         else:
+#             X[i] = -torch.rand(1)  # Valores entre -1 e 0 (distribuição uniforme)
 
-    # Adicionando ruído às entradas
-    noise = torch.normal(mean=0, std=0.1, size=(n_elements, n_features))  # Distribuição normal com média 0 e desvio padrão 0.1
-    X += noise
-    return X
+#     # Adicionando ruído às entradas
+#     noise = torch.normal(mean=0, std=0.1, size=(n_elements, n_features))  # Distribuição normal com média 0 e desvio padrão 0.1
+#     X += noise
+#     return X
 
 def mst_graph(X):
     """Returns Minimum Spanning Tree (MST) graph from the feature matrix.
@@ -119,18 +119,57 @@ def graph_from_adjacency_matrix(adj_matrix):
 
     return graph
 
-def ordenar_lista_de_acordo_com_outra(elements, loss):
-    # Combine as duas listas usando zip
-    lista_combinada = list(zip(loss, elements))
+# def ordenar_lista_de_acordo_com_outra(elements, loss):
+#     # Combine as duas listas usando zip
+#     lista_combinada = list(zip(loss, elements))
 
-    # Classifique a lista combinada com base na ordem da primeira lista
-    lista_combinada.sort(key=lambda x: x[0])
+#     # Classifique a lista combinada com base na ordem da primeira lista
+#     lista_combinada.sort(key=lambda x: x[0])
 
-    # Extraia a lista ordenada originalmente
-    lista_ordenada = [item[1] for item in lista_combinada]
+#     # Extraia a lista ordenada originalmente
+#     lista_ordenada = [item[1] for item in lista_combinada]
 
-    return lista_ordenada
+#     return lista_ordenada
 
+
+def nearest_nodes(P, i, G, k = 3):
+    '''
+    For every i in P, compute the distance using dijkstra algorithm for every j in P. Return a tuple with the 3 nearest elements (lowest values of dijkstra), from i to the result.
+    if there is no path between i and j, the distance is infinity
+    '''
+    if k >= len(P):
+        k = len(P) - 1
+    distances = []
+    for j in P:
+        if i != j:
+            try:
+                distances.append((nx.dijkstra_path_length(G, i, j), j))
+            except:
+                distances.append((np.inf, j))
+    distances.sort()
+    return [distances[i][1] for i in range(k)]
+
+def connect_nearest_nodes(G, P, k = 3):
+    '''
+    For every node in P, compute the nearest node in P and connect them using G.add_nodes_from
+    '''
+    if k >= len(P):
+        k = len(P) - 1
+    for i in P:
+        nearest = nearest_nodes(P, i, G, k)
+        for j in nearest:
+            G.add_edge(i, j)
+    return G
+
+def strong_connect_positives(P, edge_index, m):
+    '''
+    for every node i,j if i and j are positives, then, the edge_weight between i and j is m
+    '''
+    edge_weight = torch.zeros(edge_index.shape[1])
+    for index, src, tgt in zip(range(len(edge_index[0])), edge_index[0], edge_index[1]):
+        if src in P and tgt in P:
+            edge_weight[index] = m
+    return edge_weight
 
 def compute_accuracy(y, infered_elements):
     y_pred = np.zeros(len(infered_elements))
