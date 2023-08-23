@@ -123,27 +123,27 @@ for rate in positive_rate:
         print(f'iteração {i}')
         positives = random.sample(all_positives, int(rate * len(all_positives)))
         unlabeled = list(set(range(len(G.nodes()))) - set(positives))
-        C = matrizPeso(G, positives)
-        C = torch.sqrt(C)
+        # C = matrizPeso(G, positives)
+        # C = torch.sqrt(C)
 
 
-        pul_mask = torch.tensor([1 if i in positives else 0 for i in range(len(G.nodes()))], dtype = torch.bool)
+        # pul_mask = torch.tensor([1 if i in positives else 0 for i in range(len(G.nodes()))], dtype = torch.bool)
 
-        model_RGAE = Regularized_GAE(in_channel = X.shape[1], hid_channel1 = 16, hid_channel2 = 8, D_tilde = D_tilde, C = C)
-        model_AE = Autoencoder(input_size = X.shape[1], hidden_size1 = 16, hidden_size2 = 8)
+        # model_RGAE = Regularized_GAE(in_channel = X.shape[1], hid_channel1 = 16, hid_channel2 = 8, D_tilde = D_tilde, C = C)
+        # model_AE = Autoencoder(input_size = X.shape[1], hidden_size1 = 16, hidden_size2 = 8)
 
-        optimizer_RGAE = torch.optim.Adam(model_RGAE.parameters(), lr=0.01)
-        optimizer_AE = torch.optim.Adam(model_AE.parameters(), lr = 0.01)
+        # optimizer_RGAE = torch.optim.Adam(model_RGAE.parameters(), lr=0.01)
+        # optimizer_AE = torch.optim.Adam(model_AE.parameters(), lr = 0.01)
 
 
         algorithms_ionosphere = {
         'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
-        'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
-        'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 1000, data = X, positives = positives, unlabeled = unlabeled),
-        'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 1000, data = X, positives = positives, unlabeled = unlabeled),
-        'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
-        'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1.4),
-        'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
+        # 'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
+        # 'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 1000, data = X, positives = positives, unlabeled = unlabeled),
+        # 'GAE_PUL' : autoencoder_PUL_model(model = model_RGAE, optimizer = optimizer_RGAE, epochs = 1000, data = X, positives = positives, unlabeled = unlabeled),
+        # 'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
+        # 'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1.4),
+        # 'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
         }
         for algorithm in algorithms_ionosphere:
             print('dataset: Ionosphere')

@@ -33,20 +33,8 @@ class LP_PUL:
 
     def train(self):
         self.a = np.zeros(len(self.unlabeled) + len(self.positives))
-        # Verificando se o grafo é conexo, se não for, cria uma MST e soma as arestas novas no grafo
-        # if not nx.is_connected(self.graph):
-        #     print('conectando o grafo')
-        #     adj = nx.adjacency_matrix(self.graph)
-        #     adj_aux = mst_graph(self.data).toarray()
-        #     aux_graph = nx.DiGraph()
-        #     aux_graph.add_nodes_from(range(len(adj_aux)))
-        #     for i in range(len(adj_aux)):
-        #         for j in range(len(adj_aux)):
-        #             if adj[i,j] == 0 and adj_aux[i,j] == 1:
-        #                 self.graph.add_edge(i,j)
         
         if not nx.is_connected(self.graph):
-            # print('Connecting the graph')
             adj = nx.to_scipy_sparse_matrix(self.graph)  # Convert to sparse matrix
             adj_aux = mst_graph(self.data).toarray()
             
