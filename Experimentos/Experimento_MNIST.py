@@ -75,7 +75,7 @@ RN_len = []
 tempo = []
 
 for rate in positive_rate:
-    for i in range(1):
+    for i in range(10):
         print(f'iteração {i}')
         positives = random.sample(all_positives, int(rate * len(all_positives)))
         unlabeled = list(set(range(len(G.nodes()))) - set(positives))
