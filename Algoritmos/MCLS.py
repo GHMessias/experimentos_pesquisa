@@ -77,6 +77,8 @@ class MCLS:
                 self.distance[element] = mean_distance
 
     def negative_inference(self, num_neg):
-        RN = sorted(self.distance, key=self.distance.get, reverse=True)[:num_neg]
+        RN = sorted(self.distance, key=self.distance.get, reverse=True)
+        print(f'tamanho do RN dentro do algoritmo MCLS: {len(RN)}')
+        RN = RN[:num_neg]
         return RN
     

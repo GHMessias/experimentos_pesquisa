@@ -77,15 +77,15 @@ for rate in positive_rate:
         
 
         algorithms = {
-        'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
-        'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
-        'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 5, data = X, positives = positives, unlabeled = unlabeled),
+        # 'LP_PUL' : LP_PUL(graph = G, data = X, positives = positives, unlabeled = unlabeled),
+        # 'CCRNE' : CCRNE(data = X, positives = positives, unlabeled = unlabeled),
+        # 'AE_PUL' : autoencoder_PUL_model(model = model_AE, optimizer = optimizer_AE, epochs = 5, data = X, positives = positives, unlabeled = unlabeled),
         'GAE_PUL1' : graphautoencoder_PUL_model(model = model_GAE1, optimizer = optimizer_GAE1, epochs = 5, data = X, positives = positives, unlabeled = unlabeled, edge_index = edge_index, edge_weight = None),
         'GAE_PUL2' : graphautoencoder_PUL_model(model = model_GAE2, optimizer = optimizer_GAE2, epochs = 5, data = X, positives = positives, unlabeled = unlabeled, edge_index = edge_index1, edge_weight = None),
         'GAE_PUL3' : graphautoencoder_PUL_model(model = model_GAE3, optimizer = optimizer_GAE3, epochs = 5, data = X, positives = positives, unlabeled = unlabeled, edge_index = edge_index1, edge_weight = edge_weight),
-        'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
-        'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1),
-        'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
+        # 'MCLS' : MCLS(data = X, positives = positives, k = 7, ratio = 0.1),
+        # 'PU_LP' : PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1),
+        # 'RCSVM_RN' : RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
         }
         for algorithm in algorithms:
             print('dataset: Cora')
@@ -103,6 +103,8 @@ for rate in positive_rate:
             acc_list.append(acc)
             f1_list.append(f1)
             RN_len.append(len(RN))
+            print(f'len RN: {len(RN)}, len positives: {len(positives)}')
+            
 
             # Criando o DataFrame com as listas preenchidas
             df = pd.DataFrame({

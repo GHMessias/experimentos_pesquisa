@@ -28,7 +28,9 @@ class autoencoder_PUL_model:
         output_ = self.model(self.data)
         loss_rank = [F.mse_loss(self.data[i], output_[i]).item() for i in self.unlabeled]
 
-        RN = [x for _, x in sorted(zip(loss_rank, self.unlabeled), reverse = True)][:num_neg]
+        RN = [x for _, x in sorted(zip(loss_rank, self.unlabeled), reverse = True)]
+        print(f'tamanho do RN dentro do algoritmo AE: {len(RN)}')
+        RN = RN[:num_neg]
         # for loss, element in sorted(zip(loss_rank, self.unlabeled), reverse = False):
         #     print(loss, element, y[element])
         # print(RN)
