@@ -31,44 +31,6 @@ from sklearn.metrics import accuracy_score, f1_score
 
 #     return torch.tensor(A, dtype=torch.float64)
 
-# def degree_matrix(G):
-#     D = torch.zeros((len(G.nodes()),len(G.nodes())), dtype = torch.float64)
-
-#     for i in G.nodes():
-#         D[i][i] = G.degree[i]
-
-#     return D
-
-# def inverse_sqroot_matrix(D):
-#     D_clone = D.clone()
-#     D_clone[D_clone != 0] = D_clone[D_clone != 0].pow(-0.5)
-#     return D_clone
-    
-
-# def message_passing_PUL(D_tilde, A_tilde, X, C, function):
-#     result = function(torch.matmul(torch.matmul(torch.matmul(D_tilde, (A_tilde + C)), D_tilde), X))
-#     return result
-
-# def relu(A):
-#     return torch.maximum(A, torch.tensor(0.0))
-
-# def feature_matrix(G, P, y):
-#     # Criando a matriz de características
-#     n_features = 10
-#     n_elements = len(G.nodes())
-
-#     X = torch.zeros((n_elements, n_features))
-
-#     for i in range(n_elements):
-#         if y[i] == 1:
-#             X[i] = torch.rand(1)  # Valores entre 0 e 1 (distribuição uniforme)
-#         else:
-#             X[i] = -torch.rand(1)  # Valores entre -1 e 0 (distribuição uniforme)
-
-#     # Adicionando ruído às entradas
-#     noise = torch.normal(mean=0, std=0.1, size=(n_elements, n_features))  # Distribuição normal com média 0 e desvio padrão 0.1
-#     X += noise
-#     return X
 
 def mst_graph(X):
     """Returns Minimum Spanning Tree (MST) graph from the feature matrix.
@@ -118,18 +80,6 @@ def graph_from_adjacency_matrix(adj_matrix):
                 graph.add_edge(i, j, weight=adj_matrix[i, j])
 
     return graph
-
-# def ordenar_lista_de_acordo_com_outra(elements, loss):
-#     # Combine as duas listas usando zip
-#     lista_combinada = list(zip(loss, elements))
-
-#     # Classifique a lista combinada com base na ordem da primeira lista
-#     lista_combinada.sort(key=lambda x: x[0])
-
-#     # Extraia a lista ordenada originalmente
-#     lista_ordenada = [item[1] for item in lista_combinada]
-
-#     return lista_ordenada
 
 
 def nearest_nodes(P, i, G, k = 3):
@@ -189,3 +139,24 @@ def compute_f1_score(y, infered_elements):
 
 def euclidean_distance(tensor1, tensor2):
     return torch.sqrt(torch.sum(tensor1 - tensor2) ** 2)
+
+
+def dijkstra_n_weight(G, edge_index, P, k, l):
+    '''
+    Para cada nó em P, computa os k vizinhos mais proximos utilizando dijkstra,
+    depois disso, soma l no valor das arestas que formam esses caminhos mínimos,
+    retornando o edge_weight do grafo G.
+    '''
+    edge_weight = torch.zeros(edge_index.shape[1])
+    for i in P:
+        nearest = nearest_nodes(P, i, G, k)
+        for j in nearest:
+            try:
+                node_list = nx.dijkstra_path(G, i, j)
+                for u, v in zip(node_list[:-1], node_list[1:]):
+                    mask = torch.logical_and(edge_index[0] == u, edge_index[1] == v)
+                    edge_weight[mask] += l
+            except nx.NetworkXNoPath:
+                # Handle the case when there is no path between value and j
+                pass
+    return edge_weight.pow(-0.5)
