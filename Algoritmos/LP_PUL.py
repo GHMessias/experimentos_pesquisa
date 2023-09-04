@@ -35,7 +35,7 @@ class LP_PUL:
         self.a = np.zeros(len(self.unlabeled) + len(self.positives))
         
         if not nx.is_connected(self.graph):
-            adj = nx.to_scipy_sparse_matrix(self.graph)  # Convert to sparse matrix
+            adj = nx.to_scipy_sparse_array(self.graph)  # Convert to sparse matrix
             adj_aux = mst_graph(self.data).toarray()
             
             rows, cols = np.where((adj.toarray() == 0) & (adj_aux == 1))
