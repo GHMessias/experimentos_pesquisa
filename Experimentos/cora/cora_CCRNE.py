@@ -7,9 +7,9 @@ warnings.filterwarnings("ignore")
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
 
-from Algoritmos.PU_LP import *
+from Algoritmos.CCRNE import *
 
-dataset = Planetoid(root = "Datasets", name = "CiteSeer", transform=NormalizeFeatures())
+dataset = Planetoid(root = "Datasets", name = "Cora", transform=NormalizeFeatures())
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
@@ -41,7 +41,7 @@ for rate in positive_rate:
         positives = random.sample(all_positives, int(rate * len(all_positives)))
         unlabeled = list(set(range(len(G.nodes()))) - set(positives))
         
-        algorithm = PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1)
+        algorithm = CCRNE(data = X, positives = positives, unlabeled = unlabeled)
         
         print('dataset: CiteSeer')
         start_time = time.time()
@@ -70,4 +70,4 @@ df = pd.DataFrame({
     'tempo de execução': tempo
 })
 
-df.to_csv('Resultados/dataframe_citeseer_PU_LP.csv', index = False)
+df.to_csv('Resultados/dataframe_cora_CCRNE.csv', index = False)

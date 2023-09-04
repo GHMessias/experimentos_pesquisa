@@ -70,4 +70,4 @@ df = pd.DataFrame({
     'tempo de execução': tempo
 })
 
-df.to_csv('Resultados/dataframe_citeseer_PU_LP.csv', index = False)
+df.to_csv('Resultados/dataframe_cora_PU_LP.csv', index = False)
