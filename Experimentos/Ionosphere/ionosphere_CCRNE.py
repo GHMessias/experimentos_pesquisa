@@ -11,7 +11,7 @@ from Algoritmos.CCRNE import CCRNE
 
 df = pd.read_csv('Datasets/Ionosphere/ionosphere.data')
 X = torch.tensor(df.iloc[:, :-1].values, dtype = torch.float64)
-Y = [1 if x == 'b' else 0 for x in df.iloc[:, -1].values]
+Y = [1 if x == 'g' else 0 for x in df.iloc[:, -1].values]
 
 pul_labels = [1]
 Y = torch.tensor([1 if x in pul_labels else 0 for x in Y])

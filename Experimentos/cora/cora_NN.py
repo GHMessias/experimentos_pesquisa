@@ -77,7 +77,7 @@ for rate in positive_rate:
         }
         
         for algorithm in algorithms:
-            print('dataset: CiteSeer')
+            print('dataset: CORA')
             start_time = time.time()
             print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
             algorithms[algorithm].train()

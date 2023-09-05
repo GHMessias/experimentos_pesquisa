@@ -15,7 +15,7 @@ from Auxiliares.NN_models import *
 
 df = pd.read_csv('Datasets/Ionosphere/ionosphere.data')
 X = torch.tensor(df.iloc[:, :-1].values, dtype = torch.float64)
-Y = [1 if x == 'b' else 0 for x in df.iloc[:, -1].values]
+Y = [1 if x == 'g' else 0 for x in df.iloc[:, -1].values]
 
 pul_labels = [1]
 Y = torch.tensor([1 if x in pul_labels else 0 for x in Y])
@@ -76,7 +76,7 @@ for rate in positive_rate:
         }
         
         for algorithm in algorithms:
-            print('dataset: CiteSeer')
+            print('dataset: Ionosphere')
             start_time = time.time()
             print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
             algorithms[algorithm].train()
