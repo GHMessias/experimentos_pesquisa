@@ -43,7 +43,7 @@ for rate in positive_rate:
         
         algorithm = MCLS(data = X, positives = positives, k = 7, ratio = 0.1)
         
-        print('dataset: CiteSeer')
+        print('dataset: cora')
         start_time = time.time()
         print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
         algorithm.train()

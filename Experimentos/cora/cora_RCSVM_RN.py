@@ -43,7 +43,7 @@ for rate in positive_rate:
         
         algorithm = RCSVM_RN(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.1, beta = 0.9)
         
-        print('dataset: CiteSeer')
+        print('dataset: cora')
         start_time = time.time()
         print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
         algorithm.train()

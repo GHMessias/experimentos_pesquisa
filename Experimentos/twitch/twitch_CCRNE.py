@@ -47,7 +47,7 @@ for rate in positive_rate:
         
         algorithm = CCRNE(data = X, positives = positives, unlabeled = unlabeled)
         
-        print('dataset: CiteSeer')
+        print('dataset: twitch')
         start_time = time.time()
         print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
         algorithm.train()

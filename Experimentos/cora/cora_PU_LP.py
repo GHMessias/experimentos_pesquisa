@@ -43,7 +43,7 @@ for rate in positive_rate:
         
         algorithm = PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1)
         
-        print('dataset: CiteSeer')
+        print('dataset: cora')
         start_time = time.time()
         print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
         algorithm.train()
