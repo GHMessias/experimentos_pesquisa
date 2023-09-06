@@ -11,7 +11,7 @@ from Algoritmos.LP_PUL import LP_PUL
 
 from torch_geometric.datasets import Twitch
 
-dataset = Twitch(root = "Datasets", name = "PT")
+dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx

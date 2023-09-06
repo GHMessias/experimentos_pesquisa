@@ -7,11 +7,10 @@ warnings.filterwarnings("ignore")
 from Auxiliares.requirements import *
 from Auxiliares.auxiliar_functions import *
 
-from Algoritmos.CCRNE import *
+from Algoritmos.PU_LP import *
 from torch_geometric.datasets import Twitch
 
 dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
-# dataset = Planetoid(root = 'Datasets', name = 'Cora', transform=NormalizeFeatures() )
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
@@ -19,9 +18,7 @@ G = to_networkx(data, to_undirected=True)
 
 # Criando uma variável para armazenar as features
 X = data.x.double()
-print(X[0])
 Y = data.y
-print(Y[0])
 pul_label = [1]
 Y = torch.tensor([1 if label in pul_label else 0 for label in Y])
 
@@ -45,9 +42,9 @@ for rate in positive_rate:
         positives = random.sample(all_positives, int(rate * len(all_positives)))
         unlabeled = list(set(range(len(G.nodes()))) - set(positives))
         
-        algorithm = CCRNE(data = X, positives = positives, unlabeled = unlabeled)
+        algorithm = PU_LP(data = X, positives = positives, unlabeled = unlabeled, alpha = 0.3, m = 3, l = 1)
         
-        print('dataset: CiteSeer')
+        print('dataset: twitch')
         start_time = time.time()
         print(f'algoritmo {algorithm}, porcentagem do dataset positivo {rate}')
         algorithm.train()
@@ -74,4 +71,4 @@ df = pd.DataFrame({
     'tempo de execução': tempo
 })
 
-df.to_csv('Resultados/dataframe_twitch_CCRNE.csv', index = False)
+df.to_csv('Resultados/dataframe_twitch_PU_LP.csv', index = False)
