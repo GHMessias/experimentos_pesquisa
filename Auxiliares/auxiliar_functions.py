@@ -159,4 +159,4 @@ def dijkstra_n_weight(G, edge_index, P, k, l):
             except nx.NetworkXNoPath:
                 # Handle the case when there is no path between value and j
                 pass
-    return edge_weight.pow(-0.5)
+    return edge_weight.pow(0.5)

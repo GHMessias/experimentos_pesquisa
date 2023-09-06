@@ -13,7 +13,8 @@ from Auxiliares.NN_models import *
 
 from torch_geometric.datasets import Twitch
 
-dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
+# dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
+dataset = Twitch(root = "Datasets", name = "PT")
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
@@ -22,7 +23,7 @@ G = to_networkx(data, to_undirected=True)
 # Criando uma variável para armazenar as features
 X = data.x.double()
 Y = data.y
-pul_label = [2]
+pul_label = [1]
 Y = torch.tensor([1 if label in pul_label else 0 for label in Y])
 
 # Gerando os dados positivos e negativos
