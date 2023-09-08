@@ -4,7 +4,7 @@ pastas = [
 # 'citeseer',
 #           'cora',
 #           'Ionosphere', 
-           'MNIST', 
+#           'MNIST', 
            'twitch'
           ]
 
