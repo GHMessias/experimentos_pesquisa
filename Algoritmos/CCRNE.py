@@ -5,6 +5,7 @@ def euclidean_distance(tensor1, tensor2):
 
 def phy(m):
     return torch.log2(m) + 1
+    # return torch.log10(m) + 1
 
 def return_index(centroids, O_j):
     for index,value in enumerate(centroids):
@@ -18,6 +19,7 @@ class CCRNE:
         self.r_p = 0
         self.positives = positives
         self.unlabeled = unlabeled
+        self.ratio = 0.6
 
     def train(self):
         self.pul_mask = torch.zeros(len(self.data))
@@ -64,7 +66,7 @@ class CCRNE:
 
         for i in range(len(self.clusters)):
             for x_i in RN:
-                    if euclidean_distance(self.data[x_i], self.clusters[i]['centroid']) < self.r_p:
+                    if euclidean_distance(self.data[x_i], self.clusters[i]['centroid']) < self.ratio * self.r_p:
                         RN.remove(x_i)
         
         return RN[:num_neg]
