@@ -69,4 +69,5 @@ class CCRNE:
                     if euclidean_distance(self.data[x_i], self.clusters[i]['centroid']) < self.ratio * self.r_p:
                         RN.remove(x_i)
         
+        print(len(RN))
         return RN[:num_neg]

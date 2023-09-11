@@ -13,7 +13,7 @@ from Auxiliares.NN_models import *
 
 
 
-dataset = Planetoid(root = "Datasets", name = "CiteSeer", transform=NormalizeFeatures())
+dataset = Planetoid(root = "Datasets", name = "Cora", transform=NormalizeFeatures())
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx

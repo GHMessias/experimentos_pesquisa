@@ -17,7 +17,7 @@ pul_labels = [1]
 Y = torch.tensor([1 if x in pul_labels else 0 for x in Y])
 
 # Criando um grafo a partir da matriz de proximidade Kneighbors
-G = graph_from_adjacency_matrix(kneighbors_graph(X, 3, mode='distance', include_self=False).todense())
+G = graph_from_adjacency_matrix(kneighbors_graph(X, 8, mode='distance', include_self=False).todense())
 edge_index = torch.tensor(list(G.edges)).t().contiguous()
 # Gerando os dados positivos e negativos
 all_positives = [index for index in range(len(Y)) if Y[index] == 1]

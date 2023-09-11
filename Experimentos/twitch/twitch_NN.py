@@ -13,8 +13,8 @@ from Auxiliares.NN_models import *
 
 from torch_geometric.datasets import Twitch
 
-# dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
-dataset = Twitch(root = "Datasets", name = "PT")
+dataset = Twitch(root = "Datasets", name = "PT", transform=NormalizeFeatures())
+# dataset = Twitch(root = "Datasets", name = "PT")
 data = dataset[0]
 
 # transformando o arquivo data em um grafo networkx
