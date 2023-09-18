@@ -22,7 +22,7 @@ G = to_networkx(data, to_undirected=True)
 # Criando uma variável para armazenar as features
 X = data.x.double()
 Y = data.y
-pul_label = [2]
+pul_label = [3]
 Y = torch.tensor([1 if label in pul_label else 0 for label in Y])
 
 # Gerando os dados positivos e negativos
