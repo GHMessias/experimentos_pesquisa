@@ -4,8 +4,8 @@ pastas = [
 'citeseer',
 'cora',
 'Ionosphere', 
-'MNIST', 
-'twitch'
+'twitch',
+'MNIST'
 ]
 
 # Especifique o caminho da pasta onde estão os arquivos .py que você deseja executar
