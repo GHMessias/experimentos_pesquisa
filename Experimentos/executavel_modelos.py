@@ -1,11 +1,11 @@
 import os
 
 pastas = [
-'citeseer',
+# 'citeseer',
 'cora',
-'Ionosphere', 
-'twitch',
-'MNIST'
+# 'Ionosphere', 
+# 'twitch',
+# 'MNIST'
 ]
 
 # Especifique o caminho da pasta onde estão os arquivos .py que você deseja executar
